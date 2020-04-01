@@ -83,11 +83,6 @@ fi
   | gzip -n > "$bottle"
 
 if [[ ! "${GITHUB_WORKFLOW:-}" ]]; then
-  s3_path="s3://downloads.mtrlz.dev/materialized-$version.high_sierra.bottle.tar.gz"
-  aws s3 cp --acl public-read "$bottle" "$s3_path"
-  echo "uploaded bottle to $s3_path"
-  shasum -a 256 "$bottle"
-
   curl -n -f -X POST -H "Content-Type: application/json" -d "
     {
         \"name\": \"$version\",
@@ -99,4 +94,5 @@ if [[ ! "${GITHUB_WORKFLOW:-}" ]]; then
   curl -n -f -T "$bottle" "https://api.bintray.com/content/materialize/homebrew/materialized/$version/materialized-$version.high_sierra.bottle.tar.gz;publish=1"
   echo
   echo "Uploaded and published bottle to Bintray"
+  shasum -a 256 "$bottle"
 fi
